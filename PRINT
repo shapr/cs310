@@ -1,0 +1,35 @@
+* ASSIGNMENT 1 -*- asm -*-
+EXAMPLE1 START
+         STM   14,12,12(13)                BEGINNING HOUSEKEEPING
+         BALR  12,0                        BEGINNING HOUSEKEEPING
+         USING HERE,12                     BEGINNING HOUSEKEEPING
+HERE     ST    13,SAVEAREA+4               BEGINNING HOUSEKEEPING
+         LA    13,SAVEAREA                 BEGINNING HOUSEKEEPING
+         LA    8,0                         load 0 into r8
+         LA    9,1                         load 1 into r9
+         LA    10,5                        load 3 into r10
+LOOP     SR    10,9
+OUTPUT   XDECO 10,OUT
+         XPRNT CC,13
+*         BCT   10,ENDHOUSE
+         CR    10,8
+         BC    B'1000',END
+         B     LOOP
+END      NOP   0
+ENDHOUSE L     13,SAVEAREA+4               END HOUSEKEEPING
+         LM    14,12,12(13)                END HOUSEKEEPING
+         BR    14                          END HOUSEKEEPING
+SAVEAREA DS    18F                         END HOUSEKEEPING
+         DS    CL1
+CARD     DS    CL80
+ZERO     DC    F'0'
+ONE      DC    F'1'
+CC       DC    C'0'
+OUT      DS    CL12
+         END   EXAMPLE1
+$ENTRY
+1 11
+2 22
+3 33
+$ENTRY
+
