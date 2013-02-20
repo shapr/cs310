@@ -1,0 +1,43 @@
+* ASSIGNMENT 1 February 13th, 2013 CS310 Shae Erisson -*- asm -*-
+* Register 3 holds the number most recently read
+* register 4 holds the largest number for this line
+* Resister 5 accumulates the total of the largest numbers found on each line
+EXAMPLE1 START
+         STM   14,12,12(13)                BEGINNING HOUSEKEEPING
+         BALR  12,0                        BEGINNING HOUSEKEEPING
+         USING HERE,12                     BEGINNING HOUSEKEEPING
+HERE     ST    13,SAVEAREA+4               BEGINNING HOUSEKEEPING
+         LA    13,SAVEAREA                 BEGINNING HOUSEKEEPING
+         L     3,ZERO
+         L     4,ZERO
+         L     5,ZERO
+LINE     XREAD 7,CARD                      load a line into CARD
+         BC    B'0100',EOF                 Check for eof
+NUMBER   XDECI 3,CARD                      read a number into R3
+         BC    B'0100',EOL                 check for eol or non-number
+         CR    3,4                         compare them
+         BC    B'0010',NUMBER              if the new number is smaller, read another
+         LR    4,3                         otherwise copy it into R4
+         BC    B'1111',NUMBER              read another number
+EOL      AR    5,4                         accumulate the total
+         BC    B'1111',LINE                read another line
+EOF      XDECO 5,OUT
+         XPRNT 5,OUT
+HOUSE    NOP   0
+         L     13,SAVEAREA+4               END HOUSEKEEPING
+         LM    14,12,12(13)                END HOUSEKEEPING
+         BR    14                          END HOUSEKEEPING
+SAVEAREA DS    18F                         END HOUSEKEEPING
+         DS    CL1
+CARD     DS    CL80
+ZERO     DC    F'0'
+ONE      DC    F'1'
+CC       DC    C'0'
+OUT      DS    CL12
+         END   EXAMPLE1
+$ENTRY
+         1 11
+         2 22
+         3 33
+$ENTRY
+

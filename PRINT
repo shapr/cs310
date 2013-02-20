@@ -1,4 +1,6 @@
 * ASSIGNMENT 1 -*- asm -*-
+* XREAD to pick up each line, until CC=1
+* XDECI reads the first number
 EXAMPLE1 START
          STM   14,12,12(13)                BEGINNING HOUSEKEEPING
          BALR  12,0                        BEGINNING HOUSEKEEPING
@@ -11,7 +13,6 @@ HERE     ST    13,SAVEAREA+4               BEGINNING HOUSEKEEPING
 LOOP     SR    10,9
 OUTPUT   XDECO 10,OUT
          XPRNT CC,13
-*         BCT   10,ENDHOUSE
          CR    10,8
          BC    B'1000',END
          B     LOOP
