@@ -11,7 +11,7 @@ HERE     ST    13,SAVEAREA+4               BEGINNING HOUSEKEEPING
          L     3,ZERO
          L     4,ZERO
          L     5,ZERO
-LINE     XREAD 7,CARD                      load a line into CARD
+LINE     XREAD CARD,80                     load a line into CARD
          BC    B'0100',EOF                 Check for eof
 NUMBER   XDECI 3,CARD                      read a number into R3
          BC    B'0100',EOL                 check for eol or non-number
