@@ -1,9 +1,12 @@
 * ASSIGNMENT 1 February 13th, 2013 CS310 Shae Erisson -*- asm -*-
-* Goal:Read an unknown amount of numbers from input,
+* INPUT: Unknown number of lines, each with three whitespace separated numbers
+* OUTPUT: The sum of the largest number from each line.
+* ACTIONS: read an unknown number of lines, read three numbers
 * accumulate a sum of the largest number from each line
 * Register key:
-* Register 3 holds the number most recently read
-* register 4 holds the largest number for this line
+* Register 2 holds the first number
+* Register 3 holds the first number
+* Register 4 holds the first number
 * Resister 5 accumulates the total of the largest numbers found on each line
 EXAMPLE1 START
          STM   14,12,12(13)                BEGINNING HOUSEKEEPING
@@ -11,36 +14,45 @@ EXAMPLE1 START
          USING HERE,12                     BEGINNING HOUSEKEEPING
 HERE     ST    13,SAVEAREA+4               BEGINNING HOUSEKEEPING
          LA    13,SAVEAREA                 BEGINNING HOUSEKEEPING
-         L     3,ZERO
-         L     4,ZERO
-         L     5,ZERO
+         LA    5,0                         zero the accumulator
 LINE     XREAD CARD,80                     load a line into CARD
-         BC    B'0100',EOF                 Check for eof
-NUMBER   XDECI 3,CARD                      read a number into R3
-         BC    B'0011',EOL                 check for eol or non-number
-         CR    3,4                         compare them
-         BC    B'0010',NUMBER              if new number is smaller,read another
-         LR    4,3                         otherwise copy it into R4
-         BC    B'1111',NUMBER              then read another number
-EOL      AR    5,4                         accumulate the total
+         XPRNT HITLINE,8
+         BC    B'0100',EOF                 check for eof
+NUMBER   XDECI 2,CARD                      read number1 into R2
+         XDECI 3,0(1)                      read number2 into R3
+         XDECI 4,0(1)                      read number3 into R4
+         CR    3,4
+         BC    B'0100',SECONDN
+         LR    4,3                         if R3 is larger than R4, put it in R4
+         XPRNT HITNUM,7
+         XDECO 4,OUT
+         XPRNT CC,26
+SECONDN  CR    2,4
+         BC    B'0100',EOL
+         LR    4,2                         if R2 is larger than R4, put it in R4
+         XDECO 4,OUT
+         XPRNT CC,26
+EOL      AR    5,4                         add the largest number to the total
          BC    B'1111',LINE                read another line
-EOF      XDECO 5,OUT
-         XPRNT CC,13
+EOF      XPRNT HITEOF,7
+         XDECO 5,OUT
+         XPRNT CC,26
 HOUSE    NOP   0
          L     13,SAVEAREA+4               END HOUSEKEEPING
          LM    14,12,12(13)                END HOUSEKEEPING
          BR    14                          END HOUSEKEEPING
 SAVEAREA DS    18F                         END HOUSEKEEPING
-         DS    CL1
 CARD     DS    CL80
-ZERO     DC    F'0'
 CC       DC    C'0'
 OUT      DS    CL12
-         DC    C' THE TOTAL IS '
+         DC    C' IS THE TOTAL '
+HITLINE  DC    C' HITLINE '
+HITEOF   DC    C' HITEOF '
+HITNUM   DC    C' HITNUM '
          END   EXAMPLE1
 $ENTRY
-1 11
-2 22
-3 33
+1 11 12
+23 22 22
+33 3 34
 $ENTRY
 
