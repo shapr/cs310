@@ -1,0 +1,26 @@
+*         BEGIN HOUSEKEEPING
+BEGIN     SUMQUOT
+          XREAD CARD,80
+          BC    B'0100',EOF
+LINE      XDECI 2,CARD
+          XDECI 3,0(1)
+          LR    4,2
+          LR    5,3
+          AR    2,3
+          DR    4,5
+          XDECO 2,SUM
+          XPRNT SUM,26
+          XDECO 5,QUOT
+          XPRNT QUOT,31
+          XREAD CARD,80
+          BC    B'1011',LINE
+EOF       XPRNT THEEND,9
+END       SUMQUOT
+SUM       DC    C'0'
+          DS    CL12
+          DC    ' IS THE SUM '
+QUOT      DC    C'0'
+          DS    CL12
+          DC    ' IS THE QUOTIENT '
+THEEND    DC    '0THE END '
+*         END HOUSEKEEPING
