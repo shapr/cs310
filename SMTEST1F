@@ -14,9 +14,9 @@ LINE      XDECI 2,CARD
           M     4,=F'1'
           DR    4,6
           XDECO 2,SUM
-          XPRNT SUM,25
+          XPRNT SUM,24
           XDECO 5,QUOT
-          XPRNT QUOT,30
+          XPRNT QUOT,29
           XREAD CARD,80
           BC    B'1011',LINE
 EOF       XPRNT THEEND,9
@@ -25,14 +25,12 @@ EOF       XPRNT THEEND,9
           BR    14                          END HOUSEKEEPING
 SAVEAREA  DS    18F                         END HOUSEKEEPING
 CARD      DS    CL80          
-SUM       DC    C'0'
-          DS    CL12
+SUM       DS    CL12
           DC    C' IS THE SUM '
-QUOT      DC    C'0'
-          DS    CL12
+QUOT      DS    CL12
           DC    C' IS THE QUOTIENT '
 THEEND    DC    C'0THE END '
           END   SUMQUOT
 $ENTRY
-1 1
-2 2
+4 2
+9 3
