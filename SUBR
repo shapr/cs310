@@ -1,0 +1,42 @@
+* demonstrate subroutines in IBM assembly
+SUBR   START
+          STM   14,12,12(13)                BEGINNING HOUSEKEEPING
+          BALR  12,0                        BEGINNING HOUSEKEEPING
+          USING HERE,12                     BEGINNING HOUSEKEEPING
+HERE      ST    13,SAVEAREA+4               BEGINNING HOUSEKEEPING
+          LA    13,SAVEAREA                 BEGINNING HOUSEKEEPING
+          XREAD CARD,80
+          BC    B'0100',EOF
+LINE      XDECI 2,CARD
+          XDECI 3,0(1)
+          XDECO 2,NUM1
+          XDECO 3,NUM2
+          LR    5,2
+          LR    6,3
+          AR    2,3
+          M     4,=F'1'
+          DR    4,6
+          XDECO 2,SUM
+          XDECO 5,QUOT
+          XPRNT CC,75
+          XREAD CARD,80
+          BC    B'1011',LINE
+EOF       XPRNT THEEND,9
+          L     13,SAVEAREA+4               END HOUSEKEEPING
+          LM    14,12,12(13)                END HOUSEKEEPING
+          BR    14                          END HOUSEKEEPING
+SAVEAREA  DS    18F                         END HOUSEKEEPING
+CARD      DS    CL80
+CC        DC    C'0'
+NUM1      DS    CL12
+          DC    C' AND '
+NUM2      DS    CL12
+          DC    C' SUM TO '
+SUM       DS    CL12
+          DC    C' QUOTIENT OF '
+QUOT      DS    CL12
+THEEND    DC    C'0THE END '
+          END   SUBR
+$ENTRY
+4 2
+9 3

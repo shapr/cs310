@@ -1,0 +1,29 @@
+* demonstrate subroutines in IBM assembly
+SUBR   START
+          STM   14,12,12(13)                BEGINNING HOUSEKEEPING
+          BALR  12,0                        BEGINNING HOUSEKEEPING
+          USING HERE,12                     BEGINNING HOUSEKEEPING
+HERE      ST    13,SAVEAREA+4               BEGINNING HOUSEKEEPING
+          LA    13,SAVEAREA                 BEGINNING HOUSEKEEPING
+          XREAD CARD,80
+          BC    B'0100',EOF
+LINE      NOP   0
+          LA    2,5
+          XDECO 2,NUM1
+          XPRNT CC,27
+          BCT   2,LINE
+          B     EOF
+EOF       XPRNT THEEND,9
+          L     13,SAVEAREA+4               END HOUSEKEEPING
+          LM    14,12,12(13)                END HOUSEKEEPING
+          BR    14                          END HOUSEKEEPING
+SAVEAREA  DS    18F                         END HOUSEKEEPING
+CARD      DS    CL80
+CC        DC    C'0'
+NUM1      DS    CL12
+          DC    C' is the number '
+THEEND    DC    C'0THE END '
+          END   SUBR
+$ENTRY
+4 2
+9 3
