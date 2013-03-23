@@ -1,0 +1,34 @@
+* demonstrate subroutines in IBM assembly -*- asm -*-
+SUBR   START
+          STM   14,12,12(13)                BEGINNING HOUSEKEEPING
+          BALR  12,0                        BEGINNING HOUSEKEEPING
+          USING HERE,12                     BEGINNING HOUSEKEEPING
+HERE      ST    13,SAVEAREA+4               BEGINNING HOUSEKEEPING
+          LA    13,SAVEAREA                 BEGINNING HOUSEKEEPING
+          BAL   11,PRINT
+          BAL   11,PRINT
+          L     13,SAVEAREA+4               END HOUSEKEEPING
+          LM    14,12,12(13)                END HOUSEKEEPING
+          BR    14                          END HOUSEKEEPING
+SAVEAREA  DS    18F                         END HOUSEKEEPING
+CARD      DS    CL80                        80 characters is one line
+TABLE     DS    20F                         20 full words, or 20 integers or ...
+* declarations are contiguous, so the following zero size declaration is the end of the table
+ENDTABLE  DS    0F                          zero size declaration become a location
+CC        DC    C'0'
+NUM1      DS    CL12
+          DC    C' AND '
+NUM2      DS    CL12
+          DC    C' SUM TO '
+SUM       DS    CL12
+          DC    C' QUOTIENT OF '
+QUOT      DS    CL12
+THEEND    DC    C'0THE END '
+* internal subroutines go after the last storage declaration
+* first the name of the subroutine
+PRINT     XPRNT =C'0useless subroutine is useless'
+          BR    11 
+          END   SUBR
+$ENTRY
+4 2
+9 3
