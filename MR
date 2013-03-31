@@ -1,0 +1,56 @@
+* demonstrate subroutines in IBM assembly -*- asm -*-
+SUBR   START
+          STM   14,12,12(13)                BEGINNING HOUSEKEEPING
+          BALR  12,0                        BEGINNING HOUSEKEEPING
+          USING HERE,12                     BEGINNING HOUSEKEEPING
+HERE      ST    13,SAVEAREA+4               BEGINNING HOUSEKEEPING
+          LA    13,SAVEAREA                 BEGINNING HOUSEKEEPING
+          XREAD CARD,80
+          BC    B'0100',EOF
+LINE      NOP   0
+          LA    2,5                         load 5 into reg2
+          XPRNT =C'0REG2',5
+          XDECO 2,OUTY                      What did we load into reg2?
+* When this comment is removed, the next line stops printing?
+          XPRNT CC1,13
+          LA    3,10                        load 10 into reg3
+          LA    4,4                         load 4 into reg4
+          XPRNT =C'0REG3',5
+          XDECO 3,OUTY                      What did we load into reg3?
+* When this comment is removed, the next line stops printing?
+          XPRNT CC1,13
+          XPRNT =C'0REG4',5
+          XDECO 4,OUTY                      What did we load into reg4?
+* When this comment is removed, the next line stops printing?
+          XPRNT CC1,13
+          MR    2,4                         multiply R3 times R4
+          XPRNT =C'0MULTIPLY REG3 AND REG4',23
+          XPRNT =C'0REG2',5
+          XDECO 2,OUTY                      What did we load into reg2?
+* When this comment is removed, the next line stops printing?
+          XPRNT CC1,13
+*oh yeah
+          XPRNT =C'0REG3',5
+          XDECO 3,OUTY                      What did we load into reg3?
+* When this comment is removed, the next line stops printing?
+          XPRNT CC1,13
+          BCT   2,EOF
+          XPRNT WTF
+          B     LINE
+EOF       XPRNT THEEND,9
+          L     13,SAVEAREA+4               END HOUSEKEEPING
+          LM    14,12,12(13)                END HOUSEKEEPING
+          BR    14                          END HOUSEKEEPING
+SAVEAREA  DS    18F                         END HOUSEKEEPING
+CARD      DS    CL80
+CC        DC    C'0'
+NUM1      DS    CL12
+          DC    C' is the number '
+THEEND    DC    C'0THE END '
+WTF       DC    C'0WTF '
+CC1       DC    C'0'
+OUTY      DS    CL12
+          END   SUBR
+$ENTRY
+4 2
+9 3
