@@ -13,3 +13,5 @@ or possibly you can browse http://bitsavers.trailing-edge.com/pdf/ibm/360/
 (many props to Ehud Lamm for pointing me to these)
 
 I'm using SC20-1646-6 from August 1970 and A22-6821-7 from December 1967, the number at the end appears to be the version number, use the most recent version you can find.
+
+I'm using ASSIST/I and it's crap, but the latest version (from 1984) and useful bits are still at http://www.kcats.org/assist/
