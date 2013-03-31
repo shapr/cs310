@@ -1,0 +1,226 @@
+*Maintain the balance for a savings 
+*account
+*Program accept as input adeck of cards,
+*each of which will conform to one of 
+*four formats
+*0--Initial balance card
+*1--Deposit card
+*2--Withdrawal card
+*3--Interest calculation card
+*
+*------------------------------------
+*MY NAME:PENGCHENG ZHAO
+*DUE DATE:NOVEMBER 16,2011
+*ASSIGNMENT #5
+*------------------------------------
+*
+*Register key:
+*reg2 contains the address of card
+*
+*BEGINNING HOUSEKEEPING
+*
+ACCOUNT  START
+         STM   14,12,12(13)
+         BALR  12,0
+         USING HERE,12
+HERE     ST    13,SAVEAREA+4
+         LA    13,SAVEAREA
+READ     XREAD CARD,80
+         BC    B'0100',EXIT
+         LA    2,CARD
+         CLI   0(2),C'0'
+         BC    B'0111',CHECK1
+         BAL   11,INITIAL
+CHECK1   CLI   0(2),C'1'
+         BC    B'0111',CHECK2
+         BAL   11,DEPOSIT
+CHECK2   CLI   0(2),C'2'
+         BC    B'0111',CHECK3
+         BAL   11,WTHDRAL
+CHECK3   CLI   0(2),C'3'
+         BC    B'0111',FINAL
+         BAL   11,INTREST 
+FINAL    BC    B'1111',READ
+EXIT     MVC   TDOUT(15),=X'402020206B2020206B2020214B2020'
+         ED    TDOUT(15),TOTDPST
+         MVC   TWOUT(15),=X'402020206B2020206B2020214B2020'
+         ED    TWOUT(15),TOTWHDL
+         DP    TOTDPST(6),NDPST(2)
+         MVC   AVGDOUT(10),=X'4020206B2020214B2020'
+         ED    AVGDOUT(10),AVGDPST
+         DP    TOTWHDL(6),NWHDL(2)
+         MVC   AVGWOUT(10),=X'4020206B2020214B2020'
+         ED    AVGWOUT(10),AVGWHDL
+         MVC   NDOUT(4),=X'40202120'
+         ED    NDOUT(4),NDPST
+         XPRNT CC8,17
+         XPRNT CC9,42
+         XPRNT CC10,42
+         MVC   NWOUT(4),=X'40202120'
+         ED    NWOUT(4),NWHDL
+         XPRNT CC11,20
+         XPRNT CC12,45
+         XPRNT CC13,45
+         MVC   FNLOUT(13),=X'40206B2020206B2020214B2020'
+         ED    FNLOUT(13),BALANCE
+         XPRNT CC14,45
+*
+*END HOUSEKEEPING
+*   
+         L     13,SAVEAREA+4
+         LM    14,12,12(13)
+         BR    14
+SAVEAREA DS    18F
+CARD     DS    CL80
+BALANCE  DS    PL5
+TOTDPST  DS    0PL6
+AVGDPST  DS    PL4
+REMDPST  DS    PL2
+TOTWHDL  DS    0PL6
+AVGWHDL  DS    PL4
+REMWHDL  DS    PL2
+NDPST    DS    PL2
+NWHDL    DS    PL2
+CC8      DC    C' # DEPOSITS ='
+NDOUT    DS    CL4
+CC9      DC    C' TOTAL AMOUNT OF DEPOSITS=$'
+TDOUT    DS    CL15
+CC10     DC    C' AVG. AMOUNT/DEPOSIT     =$     '
+AVGDOUT  DS    CL10
+CC11     DC    C' # WITHDRAWALS ='
+NWOUT    DS    CL4
+CC12     DC    C' TOTAL AMOUNT OF WITHDRAWALS=$'
+TWOUT    DS    CL15
+CC13     DC    C' AVG. AMOUNT/WITHDRAWALS    =$     '
+AVGWOUT  DS    CL10
+CC14     DC    C'         CURRENT BALANCE    =$  '
+FNLOUT   DS    CL13
+*
+*--------------------------------------------------------
+*INITIAL SUBROUTINE
+*INITIALIZE BALANCE, 
+*GOT A BALANCE VALUE
+*INITIALIZE THE TOTAL DEPOSITS,
+*TOTAL WHITDRAWALS,
+*NUMBER OF DEPOSITS AND
+*NUMBER OF WHITDRAWALS TO ZERO
+*SET MINIMUN BALANCE AS INITIAL BALANCE
+*--------------------------------------------------------
+*
+INITIAL  PACK  BALANCE(5),CARD+1(9)
+         MVC   INITBAL(13),=X'40206B2020206B2020214B2020'
+         ED    INITBAL(13),BALANCE
+         MVC   INITACC(13),INITBAL
+         XPRNT TITLE,34
+         XPRNT CODE,46
+         XPRNT CC1,42
+         ZAP   TOTDPST(6),=P'0'
+         ZAP   TOTWHDL(6),=P'0'
+         ZAP   NDPST(2),=P'0'
+         ZAP   NWHDL(2),=P'0'
+         ZAP   MINBAL(7),BALANCE(5)
+         BR    11
+CC1      DC    C'   0   '
+INITBAL  DS    CL13
+CC2      DC    C'         '
+INITACC  DS    CL13
+MINBAL   DS    0PL7
+INTER    DS    PL4
+REM      DS    PL3
+TITLE    DC    C'1       SAVINGS   ACCOUNT   REPORT'
+CODE     DC    C' TRAN.CODE   AMOUNT     RATE   CURRENT BALANCE' 
+*
+*---------------------------------------------------------
+*DEPOSIT SUBROUTINE
+*PRINT OUT THE NUMBER OF MONEY 
+*WHICH IS DEPOSITTED
+*ADD THE NUMBER TO BALANCE 
+*AND TOTAL AMOUNT OF DEPOSITS
+*PRINT OUT CURRENT BALANCE
+*---------------------------------------------------------
+*
+DEPOSIT  PACK  DPST(5),CARD+1(9)
+         MVC   DPSTOUT(13),=X'40206B2020206B2020214B2020'
+         ED    DPSTOUT(13),DPST  
+         AP    BALANCE(5),DPST(5)
+         MVC   BALOUT1(14),=X'40206B2020206B2020214B202060'
+         ED    BALOUT1(14),BALANCE
+         XPRNT CC3,43
+         AP    TOTDPST(6),DPST(5)
+         AP    NDPST(2),=P'1'
+         BR    11
+DPST     DS    PL5
+CC3      DC    C'   1   '
+DPSTOUT  DS    CL13
+CC4      DC    C'         '
+BALOUT1  DS    CL14 
+*
+*---------------------------------------------------
+*WTHDRAL SUBROUTINE
+*PRINT OUT THE NUMBER OF MONEY 
+*WHICH IS WITHDRAWALED
+*DECREASE THE NUMBER FROM BALANCE 
+*ADD THE NUMBER TO 
+*TOTAL AMOUNT OF WITHDRAWALS
+*PRINT OUT CURRENT BALANCE
+*COMPARE MINIMUN BALANCE WITH
+*CURRENT BALANCE
+*---------------------------------------------------
+*
+WTHDRAL  PACK  WHDL(5),CARD+1(9)
+         MVC   WHDLOUT(13),=X'40206B2020206B2020214B2020'
+         ED    WHDLOUT(13),WHDL
+         SP    BALANCE(5),WHDL(5)
+         MVC   BALOUT2(14),=X'40206B2020206B2020214B202060'
+         ED    BALOUT2(14),BALANCE
+         AP    TOTWHDL(6),WHDL(5)
+         AP    NWHDL(2),=P'1'
+         XPRNT CC5,43
+         ZAP   TEMPBAL(7),MINBAL(7)
+         SP    TEMPBAL(7),BALANCE(5)
+         BC    B'1100',DONOTHG
+         ZAP   MINBAL(7),BALANCE(5)
+DONOTHG  BR    11
+WHDL     DS    PL5
+CC5      DC    C'   2   '
+WHDLOUT  DS    CL13
+CC6      DC    C'         '
+BALOUT2  DS    CL14
+TEMPBAL  DS    PL7
+*
+*---------------------------------------------------------
+*INTEREST SUBROUTINE
+*CALCULATE THE AMOUNT OF INTEREST
+*ADD THIS AMOUNT TO CURRENT BALANCE
+*PRINT OUT THE INTEREST RATE
+*AND CURRENT BALANCE
+*COPY CURRENT BALANCE TO
+*MINIMUM BALANCE
+*---------------------------------------------------------
+*
+INTREST  PACK  INT(2),CARD+1(3)
+         MVC   INTOUT(5),=X'40214B2020'
+         ED    INTOUT(5),INT
+         AP    MINBAL(7),=P'0'
+         BC    B'1100',NOINT
+         MP    MINBAL(7),INT(2)
+         DP    MINBAL,=P'10000'
+         AP    BALANCE(5),INTER(4)
+NOINT    MVC   INTBAL(14),=X'40206B2020206B2020214B202060'
+         ED    INTBAL(14),BALANCE
+         ZAP   MINBAL(7),BALANCE
+         XPRNT CC7,43
+         BR    11
+INT      DS    PL2
+CC7      DC    C'   3                    ' 
+INTOUT   DS    CL5
+INTBAL   DS    CL14
+         END   ACCOUNT
+$ENTRY
+0000021214
+1000011000
+2000004200
+1000020000
+2000012050
+3400
+

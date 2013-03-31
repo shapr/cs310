@@ -1,0 +1,157 @@
+*PROGRAM CHANGES THE FORM OF 
+*NAME,ADDRESS AND CITY,STATE,ZIP CODE
+*EVERY STEP WILL USE A SUBROUTINE
+*READ SIX LINES FOR PER PERSON
+*
+*-----------------------------------------
+*MY NAME:PENGCHENG ZHAO
+*DUE DATE:NOVEMBER 7,2011
+*ASSIGNMENT #4
+*-----------------------------------------
+*
+*REGISTER KEY:USE R11 TO CALL SUBROUTINE
+*
+*BEGINNING HOUSEKEEPING
+*
+NMADD    START
+         STM   14,12,12(13)
+         BALR  12,0
+         USING HERE,12
+HERE     ST    13,SAVEAREA+4
+         LA    13,SAVEAREA
+*
+*PROGRAM MAIN BODY
+*
+READ     XREAD CARD,80
+         BC    B'0100',FINAL 
+         BAL   11,NAME
+         BAL   11,ADD
+         BAL   11,CTSTZP
+         BC    B'1111',READ
+FINAL    L     13,SAVEAREA+4
+         LM    14,12,12(13)
+         BR    14
+SAVEAREA DS    18F
+*
+*END HOUSEKEEPING
+* 
+CARD     DS    CL80 
+LINE     DS    CL80
+*
+*SUBROUTINE NAME 
+*CHANGE THE FORM OF NAME
+*REGISTER KEY:R10 TO CALL 
+*THE SUBROUTINE
+*R2 STORE THE ADDERSS OF CARD
+*R3 STORE THE ADDRESS OF LINE
+NAME     BAL   10,INIT 
+         LA    2,CARD
+         BAL   10,LOOP1                      
+         LA    2,1(2)
+         BAL   10,LOOP1
+         LA    2,1(2)
+         BAL   10,LOOP2
+         LA    2,CARD
+         MVI   0(3),C','
+         LA    3,2(3)
+         BAL   10,LOOP2
+         LA    3,1(3)
+         LA    2,1(2)
+         MVC   0(1,3),0(2)
+         MVI   1(3),C'.'
+         XPRNT LINE,80
+         BR    11
+*
+*SUBROUTINE LOOP1
+*FIND THE WHITE SPACE
+*
+LOOP1    CLI   0(2),C' '
+         BC    B'1000',NEXT
+         LA    2,1(2)
+         BC    B'1111',LOOP1
+NEXT     BR    10 
+*
+*SUBROUTINE LOOP2
+*COPY THE CONTENTS OF CARD INTO LINE
+* 
+LOOP2    CLI   0(2),C' '
+         BC    B'1000',AFTER
+         MVC   0(1,3),0(2)
+         LA    2,1(2)
+         LA    3,1(3)
+         BC    B'1111',LOOP2
+AFTER    BR    10
+*
+*SUBROUTINE ADD
+*CHANGE THE FORM OF ADDRESS
+*REGISTER KEY:
+*USE R10 TO CALL THE SUBROUTINE 
+*R3 STORE THE ADDRESS OF LINE
+*
+ADD      BAL   10,INIT 
+         BAL   10,ADAPCTST
+         LA    3,2(3)
+         BAL   10,ADAPCTST
+         XPRNT LINE,80
+         BR    11
+*
+*SUBROUTINE CTSTZP
+*CHANGE THE FORM OF CITY,STATE AND ZIP
+*REGISTER KEY:
+*R3 STORE THE ADDRESS OF LINE
+*USE R10 TO CALL SUBROUTINE
+*
+CTSTZP   BAL   10,INIT 
+         BAL   10,ADAPCTST
+         MVI   0(3),C','
+         LA    3,2(3)
+         BAL   10,ADAPCTST
+         XREAD CARD,80
+         MVC   2(5,3),CARD
+         XPRNT LINE,80
+         BR    11
+*
+*SUBROUTINE ADAPCTST
+*FIND LAST CHARACTER WHICH IS 
+*NOT SPACE
+*REGISTER KEY
+*R6 STORE THE ADDRESS OF CARD
+*R5 IS THE STEP REGISTER FOR BXH
+*R8 IS THE STEP REGISTER FOR BXLE
+*R9 IS THE CONTROL REGISTER FOR
+*BXH AND TERMINAL REGISTER FOR
+*BXLE
+*USE R10 TO CALL SUBROUTINE
+* 
+ADAPCTST XREAD CARD,80
+         L     5,=F'-1'
+         LA    8,1
+         LA    6,CARD
+         LA    9,CARD+79
+LOOP3    CLI   0(9),C' '
+         BC    B'0110',THEN
+         BXH   9,5,LOOP3
+THEN     MVC   0(1,3),0(6)
+         LA    3,1(3)
+         BXLE  6,8,THEN
+         BR    10
+*
+*SUBROUTINE INIT
+*INITIALIZE THE LINE
+*REGISTER KEY:
+*R3 STORE THE ADDRESS OF LINE
+* 
+INIT     MVI   LINE,C' '
+         MVC   LINE+1(79),LINE         
+         LA    3,LINE
+         LA    3,1(3)
+         BR    10 
+         END   NMADD
+$ENTRY
+PENG CHENG ZHAO
+105 DORIS LN
+APT.B
+FLORENCE
+ALABAMA
+35630
+

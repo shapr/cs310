@@ -1,0 +1,93 @@
+*PURPOSE:INPUT A LIST OF DATA LINES,
+*EACH CONTAINS FIVE TEST SCORES RANGING
+*FROM 0-100.COMPUTE THE AVERAGE OF
+*THE FIVE SCORES ROUNDED TO THE NEAREST
+*INTETER.OUTPUT IS THE LIST OF AVERAGES
+*AND THE APPROPRIATE LETTER GRADE.
+*MY NAME:PENGCHENG ZHAO
+*DUE DATE:24/10/2011
+*ASSIGNMENT NUMBER:#2
+*
+*BEGINNING HOUSEKEEPING
+GETAVG   START
+         STM   14,12,12(13)
+         BALR  12,0
+         USING HERE,12
+HERE     ST    13,SAVEAREA+4
+         LA    13,SAVEAREA
+*
+*PROGRAM BODY
+LOOP     XREAD CARD,80
+         BC    B'0100',EXIT
+         XDECI 7,CARD
+         XDECI 8,0(1)
+         XDECI 2,0(1)
+         XDECI 3,0(1)
+         XDECI 4,0(1)
+         AR    7,8
+         AR    7,2
+         AR    7,3
+         AR    7,4
+         M     6,ONE
+         D     6,FIVE
+         AR    6,6
+         C     6,FIVE
+         BC    B'0100',DNT
+         A     7,ONE
+DNT      XDECO 7,OUT1
+         XDECO 7,OUT2
+         XDECO 7,OUT3
+         XDECO 7,OUT4
+         XDECO 7,OUT5
+         C     7,F
+         BC    B'0010',DLEVEL
+         XPRNT FAIL,32
+         BC    B'1111',FINAL
+DLEVEL   C     7,D
+         BC    B'0010',CLEVEL
+         XPRNT DL,32
+         BC    B'1111',FINAL
+CLEVEL   C     7,C
+         BC    B'0010',BLEVEL
+         XPRNT CL,32
+         BC    B'1111',FINAL
+BLEVEL   C     7,B
+         BC    B'0010',ALEVEL
+         XPRNT BL,32
+         BC    B'1111',FINAL
+ALEVEL   XPRNT AL,32
+FINAL    BC    B'1111',LOOP
+*
+*END HOUSEKEEPING
+EXIT     L     13,SAVEAREA+4
+         LM    14,12,12(13)
+         BR    14
+SAVEAREA DS    18F
+*
+CARD     DS    CL80
+ONE      DC    F'1'
+FIVE     DC    F'5'
+F        DC    F'63'
+D        DC    F'73'
+C        DC    F'83'
+B        DC    F'93'
+FAIL     DC    C' AVG='
+OUT1     DS    CL12
+         DC    C' LETTER GRADE=F'
+DL       DC    C' AVG='
+OUT2     DS    CL12
+         DC    C' LETTER GRADE=D'
+CL       DC    C' AVG='
+OUT3     DS    CL12
+         DC    C' LETTER GRADE=C'
+BL       DC    C' AVG='
+OUT4     DS    CL12
+         DC    C' LETTER GRADE=B'
+AL       DC    C' AVG='
+OUT5     DS    CL12
+         DC    C' LETTER GRADE=A'
+         END   GETAVG
+$ENTRY  
+90 68 75 90 85
+89 76 81 66 91
+80 75 79 61 73

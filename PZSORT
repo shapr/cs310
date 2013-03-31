@@ -1,0 +1,127 @@
+*READ UP TO 30 INTEGER SCORES,
+*ONE PER LINE
+*PLACE THE VALUES IN A TABLE,
+*PRINT THE TABLE
+*SORT THE TABLE OF VALUES INTO 
+*ASCENDING ORDER
+*PRINT THE TABLE OF VALUES AGAIN
+*MY NAME:PENGCHENG ZHAO
+*DUE DATE:NOVEMBER 2,2011
+*ASSIGNMENT #3
+*REGISTER KEY:USE R11 TO CALL THE 
+*SUBROUTINE
+*
+*BEGINNING HOUSEKEEPING
+SORT     START
+         STM   14,12,12(13)
+         BALR  12,0
+         USING HERE,12
+HERE     ST    13,SAVEAREA+4
+         LA    13,SAVEAREA
+*
+*PROGRAM MAIN BODY
+         BAL   11,READ
+         BAL   11,PRINT
+         BAL   11,SLCSORT
+         BAL   11,PRINT 
+*
+*END HOUSEKEEPING   
+         L     13,SAVEAREA+4
+         LM    14,12,12(13)
+         BR    14
+SAVEAREA DS    18F
+CARD     DS    CL80
+OUT      DS    CL12
+TABLE    DS    30CL12
+ZERO     DC    F'0'
+ONE      DC    F'1'
+THIRTY   DC    F'30'
+TWELVE   DC    F'12'
+CC       DC    C'1'
+*
+*SUBROUTINE 1
+*READ A LIST OF VALUES,ONE PER LINE
+*REGISTER KEY:
+*R2 STORE THE VALUE INTO TABLE
+*R5 IS THE STEP TO GET NEXT VALUE
+*R6 STORE THE NUMBER OF VALUES
+READ     L     6,ZERO           zero register 6
+         L     5,ZERO           zero register 5
+GETNUM   XREAD CARD,80          read 80 chars into card
+         BC    B'0100',EXIT     if read fails, exit
+         XDECI 2,CARD           read a number into register 2
+         ST    2,TABLE(5)       store the value in reg2 at the location of TABLE + reg5
+         A     5,TWELVE         add 12 to register 5
+         A     6,ONE            add 1 to register 6
+         C     6,THIRTY         compare reg6 to THIRTY
+         BC    B'1000',EXIT     if reg6 EQUALS thirty, branch to EXIT
+         BC    B'1111',GETNUM   unconditional jump to another GETNUM
+EXIT     BR    11
+*
+*SUBROUTINE 2
+*PRINT THE TABLE OF VALUES
+*REGISTER KEY:
+*R4 IS THE LOOP CONTROL
+*R3 GET THE VALUES FROM TABLE
+*R5 IS THE STEP TO GET NEXT VALUE
+*R6 STORE THE NUMBER OF VALUES
+PRINT    XPRNT CC,1
+         L     4,ZERO
+         L     5,ZERO
+LOOP     L     3,TABLE(5)
+         XDECO 3,OUT
+         XPRNT OUT,12
+         A     4,ONE
+         A     5,TWELVE 
+         CR    4,6
+         BC    B'1000',FINAL
+         BC    B'1111',LOOP
+FINAL    BR    11
+*
+*SUBROUTINE 3
+*SORT THE TABLE OF VALUES INTO 
+*ASCENDING ORDER
+*REGISTER KEY:
+*R4 IS INNER LOOP CONTROL
+*R9 IS OUTER LOOP CONTROL
+*R5 IS THE INNER STEP TO GET NEXT VALUE
+*R7 AND R10 TO SWAP THE VALUES
+*R8 IS OUTER STEP TO GET NEXT VALUE
+SWAP     LR    10,7              put reg7 into reg10
+         L     7,TABLE(5)        put TABLE+reg5 into reg7
+         ST    10,TABLE(5)       put value FROM reg10 INTO TABLE+reg5?
+         A     4,ONE             add 1 to reg 4
+         CR    4,9               compare R4 and R9
+         BC    B'1000',SUBLOOP   branch if equal
+         BC    B'1111',NEXT      unconditional jump to NEXT
+SLCSORT  L     8,ZERO            put value ZERO into reg8
+         LR    9,6               copy value of reg6 into reg9
+         BC    B'1111',SUB       unconditional jump to SUB
+SUBLOOP  ST    7,TABLE(8)        put value from reg7 into TABLE+reg8?
+         A     8,TWELVE
+SUB      LR    5,8               put 8 into reg5
+         S     9,ONE             subtract one from reg9?
+         C     9,ZERO            check to see if reg9 is zero?
+         BC    B'1000',END       branch if equal
+         L     4,ZERO            put zero into reg4
+         L     7,TABLE(5)        put TABLE+reg5 into reg7
+NEXT     A     5,TWELVE          add TWELVE to reg5, our offset into the table
+         C     7,TABLE(5)        check to see if reg7 is TABLE+reg5
+         BC    B'0010',SWAP      branch on high
+         A     4,ONE             add ONE to reg4
+         CR    4,9               compare reg4 and reg9
+         BC    B'1000',SUBLOOP   
+         BC    B'1111',NEXT
+END      BR    11
+         END   SORT
+$ENTRY
+37
+54
+68
+25
+41
+15
+56
+81
+9
+0
